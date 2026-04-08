@@ -25,7 +25,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
-    list_disply = ['content']
+    list_dispaly = ['content']
 
 # <HINT> Register Question and Choice models here
 admin.site.register(Course, CourseAdmin)
