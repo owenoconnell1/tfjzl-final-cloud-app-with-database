@@ -9,6 +9,32 @@ except Exception:
 from django.conf import settings
 import uuid
 
+# Instructor model
+class Instructor(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    full_time = models.BooleanField(default=True)
+    total_learners = models.IntegerField()
+
+    def __str__(self):
+        return self.user.username
+# Course model
+class Course(models.Model):
+    name = models.CharField(null=False, max_length=30, default='online course')
+    image = models.ImageField(upload_to='course_images/')
+    description = models.CharField(max_length=1000)
+    pub_date = models.DateField(null=True)
+    instructors = models.ManyToManyField(Instructor)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
+    total_enrollment = models.IntegerField(default=0)
+    is_enrolled = False
+
+    def __str__(self):
+        return "Name: " + self.name + "," + \
+               "Description: " + self.description
+
 # Question model
 class Question(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -24,27 +50,13 @@ class Question(models.Model):
             return True
         else:
             return False
-    
 # Choice model
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     content = models.CharField(max_length=200)
-    is_correct = models.BooleanField(default=false)
+    is_correct = models.BooleanField(default=False)
 
-
-# Instructor model
-class Instructor(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-    full_time = models.BooleanField(default=True)
-    total_learners = models.IntegerField()
-
-    def __str__(self):
-        return self.user.username
-
-
+ 
 # Learner model
 class Learner(models.Model):
     user = models.ForeignKey(
@@ -73,21 +85,6 @@ class Learner(models.Model):
         return self.user.username + "," + \
                self.occupation
 
-
-# Course model
-class Course(models.Model):
-    name = models.CharField(null=False, max_length=30, default='online course')
-    image = models.ImageField(upload_to='course_images/')
-    description = models.CharField(max_length=1000)
-    pub_date = models.DateField(null=True)
-    instructors = models.ManyToManyField(Instructor)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Enrollment')
-    total_enrollment = models.IntegerField(default=0)
-    is_enrolled = False
-
-    def __str__(self):
-        return "Name: " + self.name + "," + \
-               "Description: " + self.description
 
 
 # Lesson model
